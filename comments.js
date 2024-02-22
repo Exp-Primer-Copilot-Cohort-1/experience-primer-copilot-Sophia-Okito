@@ -1,58 +1,57 @@
-// Create web server
-// Create a web server that listens on port 3000 and serves the comments.html file
-// Use the createServer method from the http module to create the server
-// Use the createReadStream method from the fs module to read the comments.html file    
-// Use the pipe method to send the file to the response object
-// Listen on port 3000
-// The server should respond to all requests with the comments.html file
-// The server should listen on port 3000
-// The server should respond to all requests with the comments.html file
-// The comments.html file should be read from the file system
-// The comments.html file should be sent to the response object using the pipe method
-// The server should listen on port 3000
-// The server should respond to all requests with the comments.html file
-// The comments.html file should be read from the file system
-// The comments.html file should be sent to the response object using the pipe method
-// The server should listen on port 3000
-// The server should respond to all requests with the comments.html file
-// The comments.html file should be read from the file system
-// The comments.html file should be sent to the response object using the pipe method
-// The server should listen on port 3000
+// Create web server for comments
+// Dependencies: express, body-parser, path, fs
+var express = require('express');
+var bodyParser = require('body-parser');
+var path = require('path');
+var fs = require('fs');
 
+var app = express();
 
-// Create web server for comment
-const http = require('http');
-const fs = require('fs');
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    fs.createReadStream('comments.html').pipe(res);
+// Set up the express app to handle data parsing
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.text());
+app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+
+// Set up the port
+var PORT = process.env.PORT || 3000;
+
+// Set up the routes
+app.get('/', function(req, res) {
+	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-server.listen(3000);
+app.get('/comments', function(req, res) {
+	fs.readFile('comments.json', 'utf8', function(err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			res.send(data);
+		}
+	});
+});
 
-// Path: comments.html
+app.post('/comments', function(req, res) {
+	fs.readFile('comments.json', 'utf8', function(err, data) {
+		if (err) {
+			console.log(err);
+		} else {
+			var comments = JSON.parse(data);
+			comments.push(req.body);
+			fs.writeFile('comments.json', JSON.stringify(comments, null, 4), function(err) {
+				if (err) {
+					console.log(err);
+				} else {
+					res.send('Comment added');
+				}
+			});
+		}
+	});
+});
 
-// Create a form
+// Start the server
+app.listen(PORT, function() {
+	console.log('App listening on PORT ' + PORT);
+});
 
-// Create a form in the comments.html file
-
-// The form should have a method of POST
-
-// The form should have an action of /submit
-
-// The form should have a textarea with a name of comment
-
-// The form should have a submit button
-
-// The form should have a method of POST
-
-// The form should have an action of /submit
-
-// The form should have a textarea with a name of comment
-
-// The form should have a submit button
-
-// The form should have a method of POST
-
-// Create web server for comment
 
